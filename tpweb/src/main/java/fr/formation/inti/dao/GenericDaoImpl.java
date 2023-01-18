@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -23,13 +24,16 @@ public class GenericDaoImpl<T,ID extends Serializable> implements GenericDao<T, 
 		this.sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();		
 		this.session = sessionFactory.getCurrentSession();
 	}
-	
+
 	public void beginTransaction() {
 		if(!session.isOpen()) {
 			session = sessionFactory.openSession();
 		}
-		session.getTransaction().begin();
+		 Transaction tx = session.getTransaction();
+		 if (!tx.isActive())
+			 tx.begin();	
 	}
+
 	
 	public void commit(boolean ok) {
 		if(ok)
@@ -45,8 +49,9 @@ public class GenericDaoImpl<T,ID extends Serializable> implements GenericDao<T, 
 	
 	@Override
 	public List<T> findAll() {
-		
-		return session.createQuery("select t from "+type.getName()+" t").getResultList();
+		List<T> list = session.createQuery("select t from "+type.getName()+" t").getResultList();
+		list.forEach(t -> session.refresh(t));
+		return list;
 	}
 
 	@Override

@@ -6,25 +6,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import fr.formation.inti.entity.User;
-import fr.formation.inti.service.userService;
-import fr.formation.inti.service.userServiceImpl;
 
 /**
- * Servlet implementation class UserController
+ * Servlet implementation class ErrorController
  */
-@WebServlet("/user")
-public class UserController extends HttpServlet {
+@WebServlet("/error")
+public class ErrorController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private userService userservice;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public UserController() {
-		this.userservice = new userServiceImpl();
+	public ErrorController() {
+		super();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -34,11 +28,8 @@ public class UserController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		if(session == null) {
-			response.sendRedirect(request.getContextPath());
-		}
-		}
+		getServletContext().getRequestDispatcher("/WEB-INF/view/pageHasError.jsp").forward(request, response);
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -46,11 +37,8 @@ public class UserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// get all user
-		
-		// set employe
-		request.setAttribute("message", "erreur");
-		request.getServletContext().getRequestDispatcher("/connecter.jsp").forward(request, response);
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }

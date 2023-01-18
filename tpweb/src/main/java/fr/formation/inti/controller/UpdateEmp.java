@@ -20,15 +20,15 @@ import fr.formation.inti.service.EmployeeServiceImpl;
 /**
  * Servlet implementation class CustomerController
  */
-@WebServlet("/save")
-public class EmployeeController extends HttpServlet {
+@WebServlet("/update")
+public class UpdateEmp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private EmployeeService employeeService;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public EmployeeController() {
+	public UpdateEmp() {
 		this.employeeService = new EmployeeServiceImpl();
 	}
 
@@ -38,8 +38,13 @@ public class EmployeeController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
+		HttpSession session = request.getSession();
+		Integer id = Integer.parseInt(request.getParameter("empId"));
+		Employee emp = employeeService.findById(id);
+		session.setAttribute("emp",emp);
 		
-		request.getServletContext().getRequestDispatcher("/WEB-INF/view/saveEmp.jsp").forward(request, response);
+		request.getServletContext().getRequestDispatcher("/WEB-INF/view/updateEmp.jsp").forward(request, response);
 		}
 
 	/**
@@ -49,8 +54,9 @@ public class EmployeeController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		
-		
+		Integer id = Integer.parseInt(request.getParameter("empId"));
+		Employee emp = employeeService.findById(id);
+
 		String firstName = request.getParameter("firstName");
 		String lastName = request.getParameter("lastName");
 		String title = request.getParameter("title");
@@ -64,11 +70,14 @@ public class EmployeeController extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		Employee emp = new Employee(firstName, lastName, date, title);
-		
+		emp.setEmpId(id);
+		emp.setFirstName(firstName);
+		emp.setLastName(lastName);
+		emp.setStartDate(date);
+		emp.setTitle(title);
+
 		employeeService.save(emp);
 		request.getServletContext().getRequestDispatcher("/employees").forward(request, response);
-
 	}
 
 }

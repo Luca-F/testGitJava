@@ -37,12 +37,7 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		if(session == null) {
-			response.sendRedirect(request.getContextPath());
-		}else {
-			request.getServletContext().getRequestDispatcher("/employee").forward(request, response);
-		}
+		request.getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
 	/**
@@ -51,22 +46,19 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
+
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-//		request.setAttribute("email", email);
-//		request.setAttribute("password", password);
-		
+
 		User user = userservice.findUserBy(email, password);
 
-		if(user != null) {
-		HttpSession session = request.getSession();
-		session.setAttribute("user", user);
-		request.getServletContext().getRequestDispatcher("/user").forward(request, response);
-		
-		}else {
-			request.setAttribute("message", "erreur");
-			request.getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+		if (user != null) {
+			HttpSession session = request.getSession();
+			session.setAttribute("user", user);
+			request.getServletContext().getRequestDispatcher("/employees").forward(request, response);
+		} else {
+			request.setAttribute("message", "Erreur : veuillez saisir un mail ou mot de passe valide");
+			request.getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
 		}
 	}
 
